@@ -4,9 +4,10 @@ scaler = GradScaler('cuda')
 def decode_token(tensor, idx_to_char=idx_to_word, device=device):
     n = tensor.shape[0]
     text = []
-    for i in range(n):def collate_fn(batch):
-    sos_token = 1
-    eos_token = 2
+    for i in range(n):
+        def collate_fn(batch):
+            sos_token = 1
+            eos_token = 2
     model.train()
     train_loss, total_correct_wer = 0, 0
 
