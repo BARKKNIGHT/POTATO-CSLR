@@ -1,3 +1,6 @@
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+
 def show_sequence(sequence, NUM_FRAMES):
     columns = 4
     rows = (NUM_FRAMES + 1) // (columns)

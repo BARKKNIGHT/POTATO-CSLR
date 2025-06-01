@@ -1,3 +1,5 @@
+import torch
+
 def collate_fn(batch):
     sos_token = 1
     eos_token = 2

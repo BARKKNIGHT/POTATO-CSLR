@@ -1,7 +1,17 @@
+import torch
+from torch import nn
+from torchvision import models, transforms
+from torch.utils.data import Dataset, DataLoader, random_split
+from torch.amp import autocast, GradScaler
+import torchvision
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+
+from transformers import VivitConfig, VivitModel
+
 class ViViT_SLR(nn.Module):
     def __init__(self,
                  vivit_config=VivitConfig(),
-                 vocab_size=len(idx_to_word),
+                 vocab_size = 1299,
                  d_model=768,
                  nhead=8,
                  num_decoder_layers=4,
