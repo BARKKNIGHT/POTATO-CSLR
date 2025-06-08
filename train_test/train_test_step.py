@@ -5,40 +5,19 @@ import torch
 
 from jiwer import wer, cer
 
-def decode_token(tensor, idx_to_char, optimizer, device, dataloader, loss_fn, model, epoch):
+def decode_token(tensor, idx_to_word=idx_to_word):
     n = tensor.shape[0]
     text = []
     for i in range(n):
-        model.train()
-        train_loss, total_correct_wer = 0, 0
+        st = ''
+        for token in tensor[i]:
+            if token == 2:
+                break
+            elif token != 1 and token != 0:
+                st += idx_to_word[token.item()]
+        text.append(st)
+    return text
 
-        for X, y_input, y_target in tqdm(dataloader):
-            X, y_input, y_target = X.to(device), y_input.to(device), y_target.to(device)
-
-            with autocast('cuda'):
-                y_logit = model(X, y_input)
-
-                if y_logit.isnan().any():
-                    print("ABORT!!!! \nNan found in y_logit!")
-                    
-                loss = loss_fn(y_logit.permute(0,2,1), y_target)
-                train_loss += loss.item()
-
-            scaler.scale(loss).backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-            scaler.step(optimizer)
-            scaler.update()
-            optimizer.zero_grad()
-
-            y_pred = torch.argmax(y_logit, dim=2)
-            total_correct_wer += wer(decode_token(y_target), decode_token(y_pred))
-            del X, y_input, y_target, y_logit, loss, y_pred
-
-        acc_wer = (total_correct_wer / len(dataloader)) * 100
-        avg_loss = train_loss / len(dataloader)
-
-        print(f"Epoch {epoch} | Train Loss: {avg_loss:.4f} | Train WER: {acc_wer:.2f}%")
-        return avg_loss, acc_wer
 
 def train_step(model, optimizer, dataloader, loss_fn, epoch, device):
     model.train()
