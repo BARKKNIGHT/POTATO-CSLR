@@ -37,7 +37,7 @@ class rwth_phoenix(Dataset):
         label = torch.tensor(words)
         image_folder_path = os.path.join(self.data_path, folder[0], folder[1])
 
-        images = os.listdir(image_folder_path)
+        images = sorted(os.listdir(image_folder_path))
         end = len(images)
 
         step = self.input_fps/random.choice(self.output_fps)
